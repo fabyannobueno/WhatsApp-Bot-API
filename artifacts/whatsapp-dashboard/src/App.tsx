@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import Lottie from "lottie-react";
+
+const SUCCESS_LOTTIE = "https://lottie.host/1958bcef-1db0-49d7-9119-cb200aaf16b9/v46NF7KgVW.json";
 
 const BASE = "/api/whatsapp";
 
@@ -90,7 +93,16 @@ function QrView({ qrTs }: { qrTs: number }) {
   );
 }
 
+function useLottie(url: string) {
+  const [data, setData] = useState<object | null>(null);
+  useEffect(() => {
+    fetch(url).then(r => r.json()).then(setData).catch(() => null);
+  }, [url]);
+  return data;
+}
+
 function ConnectedView({ sessions }: { sessions: number }) {
+  const lottieData = useLottie(SUCCESS_LOTTIE);
   const [disconnecting, setDisconnecting] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
@@ -111,7 +123,10 @@ function ConnectedView({ sessions }: { sessions: number }) {
 
   return (
     <div className="section centered">
-      <div className="check-icon">✅</div>
+      {lottieData
+        ? <Lottie animationData={lottieData} loop={false} className="lottie-success" />
+        : <div className="check-icon">✅</div>
+      }
       <h2 className="connected-title">Bot Conectado</h2>
       <p className="connected-sub">O bot está ativo e respondendo mensagens automaticamente.</p>
       <div className="stats-row">

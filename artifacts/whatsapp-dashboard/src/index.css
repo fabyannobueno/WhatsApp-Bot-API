@@ -163,6 +163,11 @@ body {
   line-height: 1;
 }
 
+.lottie-success {
+  width: 120px;
+  height: 120px;
+}
+
 .connected-title {
   font-size: 22px;
   font-weight: 700;
