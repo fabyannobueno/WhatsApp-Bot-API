@@ -240,12 +240,27 @@ async function processMessage(msg: WhatsAppMessage): Promise<void> {
   updateSession(phone, { state: 'main_menu' });
 }
 
+const RETRY_DELAY_MS = 30_000;
+let retryTimeout: ReturnType<typeof setTimeout> | null = null;
+
+function scheduleRetry(): void {
+  if (retryTimeout) return;
+  logger.info({ delayMs: RETRY_DELAY_MS }, 'Scheduling WhatsApp bot re-initialization...');
+  retryTimeout = setTimeout(() => {
+    retryTimeout = null;
+    initWhatsAppBot();
+  }, RETRY_DELAY_MS);
+}
+
 export function initWhatsAppBot(): void {
   logger.info('Initializing WhatsApp bot...');
 
+  clientReady = false;
+  client = null;
+
   const executablePath = process.env['CHROME_EXECUTABLE'] || '/nix/store/qa9cnw4v5xkxyip6mb9kxqfq1z4x2dx1-chromium-138.0.7204.100/bin/chromium';
 
-  client = new Client({
+  const newClient = new Client({
     authStrategy: new LocalAuth({
       dataPath: './.wwebjs_auth',
     }),
@@ -265,35 +280,37 @@ export function initWhatsAppBot(): void {
     },
   });
 
-  client.on('qr', (qr) => {
+  newClient.on('qr', (qr) => {
     qrCodeData = qr as string;
     logger.info('QR Code generated. Scan it with WhatsApp to authenticate.');
     qrcode.generate(qr as string, { small: true });
   });
 
-  client.on('ready', () => {
+  newClient.on('ready', () => {
     clientReady = true;
     qrCodeData = null;
     initializationError = null;
     logger.info('WhatsApp bot is ready!');
   });
 
-  client.on('authenticated', () => {
+  newClient.on('authenticated', () => {
     logger.info('WhatsApp bot authenticated successfully');
   });
 
-  client.on('auth_failure', (msg) => {
+  newClient.on('auth_failure', (msg) => {
     initializationError = String(msg);
     clientReady = false;
     logger.error({ msg }, 'WhatsApp authentication failure');
+    scheduleRetry();
   });
 
-  client.on('disconnected', (reason) => {
+  newClient.on('disconnected', (reason) => {
     clientReady = false;
-    logger.warn({ reason }, 'WhatsApp bot disconnected');
+    logger.warn({ reason }, 'WhatsApp bot disconnected — will retry');
+    scheduleRetry();
   });
 
-  client.on('message', async (msg) => {
+  newClient.on('message', async (msg) => {
     const message = msg as WhatsAppMessage;
     if (message.fromMe) return;
 
@@ -304,9 +321,12 @@ export function initWhatsAppBot(): void {
     }
   });
 
-  client.initialize().catch((err: unknown) => {
+  client = newClient;
+
+  newClient.initialize().catch((err: unknown) => {
     initializationError = err instanceof Error ? err.message : String(err);
-    logger.error({ err }, 'Failed to initialize WhatsApp client');
+    logger.error({ err }, 'Failed to initialize WhatsApp client — will retry');
+    scheduleRetry();
   });
 }
 

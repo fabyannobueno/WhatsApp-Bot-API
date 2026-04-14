@@ -75,6 +75,9 @@ onlyBuiltDependencies:
   - puppeteer
 
 overrides:
+  # whatsapp-web.js is only compatible with puppeteer-core 21.x — newer versions
+  # break it with "Requesting main frame too early!" during initialization
+  puppeteer-core: "21.11.0"
   # replit uses linux-x64 only, we can exclude all other platforms
   "esbuild>@esbuild/darwin-arm64": "-"
   "esbuild>@esbuild/darwin-x64": "-"
