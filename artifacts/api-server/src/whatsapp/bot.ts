@@ -1,4 +1,6 @@
 import { createRequire } from 'node:module';
+import { rmSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
 import { logger } from '../lib/logger.js';
 import {
   botMessages,
@@ -234,11 +236,28 @@ function scheduleRetry(): void {
   }, RETRY_DELAY_MS);
 }
 
+function clearChromiumLocks(): void {
+  const profileDir = join(process.cwd(), '.wwebjs_auth', 'session');
+  for (const lockFile of ['SingletonLock', 'SingletonSocket', 'SingletonCookie']) {
+    const filePath = join(profileDir, lockFile);
+    if (existsSync(filePath)) {
+      try {
+        rmSync(filePath, { force: true });
+        logger.info({ filePath }, 'Removed stale Chromium lock file');
+      } catch (err) {
+        logger.warn({ err, filePath }, 'Could not remove Chromium lock file');
+      }
+    }
+  }
+}
+
 export function initWhatsAppBot(): void {
   logger.info('Initializing WhatsApp bot...');
 
   clientReady = false;
   client = null;
+
+  clearChromiumLocks();
 
   const executablePath = process.env['CHROME_EXECUTABLE'] || '/nix/store/qa9cnw4v5xkxyip6mb9kxqfq1z4x2dx1-chromium-138.0.7204.100/bin/chromium';
 
