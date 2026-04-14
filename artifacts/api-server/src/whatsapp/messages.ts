@@ -72,7 +72,6 @@ export const botMessages: BotMessages = {
     },
     attendant_transfer: {
       message: "⚠️ *Atendimento via WhatsApp encerrado*\n\nNosso suporte pelo WhatsApp foi descontinuado. Para atendimento, entre em contato pelas nossas plataformas oficiais:\n\n📍 *Fonicorp*\n📧 suporte@fonicorp.digital\n🌐 https://app.fonicorp.digital/support\n\n🎵 *iSound*\n📧 suporte@isound.digital\n🌐 https://api.isound.digital/support\n\n🎶 *Sonora*\n📧 suporte@sonorabeats.shop\n\nObrigado pela compreensão! 🙏",
-      action: "close"
     },
     end_session: {
       message: "✅ Seu atendimento foi finalizado com sucesso.\n\nObrigado por entrar em contato com a FONICORP. Estamos sempre à disposição!\nTenha um excelente dia! ✨",
