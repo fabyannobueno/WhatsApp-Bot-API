@@ -2,6 +2,14 @@ import app from "./app";
 import { logger } from "./lib/logger";
 import { initWhatsAppBot } from "./whatsapp/bot";
 
+process.on('uncaughtException', (err) => {
+  logger.error({ err }, 'Uncaught exception — server will continue running');
+});
+
+process.on('unhandledRejection', (reason) => {
+  logger.error({ reason }, 'Unhandled promise rejection — server will continue running');
+});
+
 const rawPort = process.env["PORT"];
 
 if (!rawPort) {

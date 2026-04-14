@@ -9,6 +9,7 @@ export type SessionState =
 
 export interface Session {
   phoneNumber: string;
+  chatId: string;
   state: SessionState;
   startedAt: Date;
   lastActivityAt: Date;
@@ -23,9 +24,10 @@ export function getSession(phoneNumber: string): Session | undefined {
   return sessions.get(phoneNumber);
 }
 
-export function createSession(phoneNumber: string): Session {
+export function createSession(phoneNumber: string, chatId: string): Session {
   const session: Session = {
     phoneNumber,
+    chatId,
     state: 'main_menu',
     startedAt: new Date(),
     lastActivityAt: new Date(),

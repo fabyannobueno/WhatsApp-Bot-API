@@ -60,7 +60,11 @@ function isValidChat(from: string): boolean {
 
 async function send(chatId: string, text: string): Promise<void> {
   if (!client || !clientReady) return;
-  await client.sendMessage(chatId, text);
+  try {
+    await client.sendMessage(chatId, text);
+  } catch (err) {
+    logger.error({ err, chatId }, 'Failed to send message');
+  }
 }
 
 async function handleTimeout(phoneNumber: string): Promise<void> {
@@ -68,11 +72,15 @@ async function handleTimeout(phoneNumber: string): Promise<void> {
   if (!session || session.state === 'ended') return;
 
   logger.info({ phoneNumber }, 'Session timed out');
+  const chatId = session.chatId;
   endSession(phoneNumber);
 
-  if (client && clientReady) {
-    const chatId = `${phoneNumber}@c.us`;
-    await client.sendMessage(chatId, botMessages.system.timeout.message);
+  try {
+    if (client && clientReady) {
+      await client.sendMessage(chatId, botMessages.system.timeout.message);
+    }
+  } catch (err) {
+    logger.error({ err, phoneNumber }, 'Failed to send timeout message');
   }
 }
 
@@ -97,7 +105,7 @@ async function processMessage(msg: WhatsAppMessage): Promise<void> {
       return;
     }
 
-    session = createSession(phone);
+    session = createSession(phone, chatId);
     const contact = await msg.getContact();
     const name = contact.pushname || contact.name || 'cliente';
     const welcomeMsg = getMessage('welcome', { name });
@@ -112,7 +120,7 @@ async function processMessage(msg: WhatsAppMessage): Promise<void> {
 
   if (session.state === 'ended') {
     endSession(phone);
-    createSession(phone);
+    createSession(phone, chatId);
     await send(chatId, botMessages.main_menu.message);
     return;
   }
