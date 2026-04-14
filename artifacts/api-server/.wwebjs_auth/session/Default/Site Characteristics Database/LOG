@@ -1,3 +1,3 @@
-2026/04/14-23:11:53.468 807 Reusing MANIFEST /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/Site Characteristics Database/MANIFEST-000001
-2026/04/14-23:11:53.468 807 Recovering log #3
-2026/04/14-23:11:53.468 807 Reusing old log /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/Site Characteristics Database/000003.log 
+2026/04/14-23:20:46.443 dbe Reusing MANIFEST /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/Site Characteristics Database/MANIFEST-000001
+2026/04/14-23:20:46.443 dbe Recovering log #3
+2026/04/14-23:20:46.443 dbe Reusing old log /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/Site Characteristics Database/000003.log 

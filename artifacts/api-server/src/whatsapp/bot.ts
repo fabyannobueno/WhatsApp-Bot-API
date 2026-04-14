@@ -357,6 +357,7 @@ export async function disconnectBot(): Promise<void> {
   clientReady = false;
   qrCodeData = null;
   initializationError = null;
+
   if (client) {
     try {
       await client.destroy();
@@ -365,8 +366,18 @@ export async function disconnectBot(): Promise<void> {
     }
     client = null;
   }
-  clearChromiumLocks();
-  logger.info('WhatsApp bot disconnected by user request');
+
+  const authDir = join(process.cwd(), '.wwebjs_auth');
+  if (existsSync(authDir)) {
+    try {
+      rmSync(authDir, { recursive: true, force: true });
+      logger.info({ authDir }, 'Removed WhatsApp auth session data');
+    } catch (err) {
+      logger.warn({ err, authDir }, 'Could not remove auth session data');
+    }
+  }
+
+  logger.info('WhatsApp bot disconnected by user request — auth data cleared');
 }
 
 export function getBotStatus(): {
