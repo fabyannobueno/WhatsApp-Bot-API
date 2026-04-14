@@ -99,6 +99,8 @@ async function buildAll() {
       "playwright",
       "puppeteer",
       "puppeteer-core",
+      "whatsapp-web.js",
+      "qrcode-terminal",
       "electron",
     ],
     sourcemap: "linked",
