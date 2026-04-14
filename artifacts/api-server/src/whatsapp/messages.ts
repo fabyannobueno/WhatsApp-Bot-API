@@ -96,7 +96,7 @@ export const botMessages: BotMessages = {
     session_ended_message: "⚠️ Seu atendimento foi encerrado.\n\nPara começar um novo atendimento, basta enviar \"Oi\". 😊",
     evaluation_message: "⭐ Como você avalia nosso atendimento?\n\nPor favor, nos dê uma nota de 1 a 5:\n⭐ 1 - Muito insatisfeito\n⭐⭐ 2 - Insatisfeito\n⭐⭐⭐ 3 - Regular\n⭐⭐⭐⭐ 4 - Satisfeito\n⭐⭐⭐⭐⭐ 5 - Muito satisfeito\n\nOu envie sua avaliação em texto livre.\n\nObrigado pelo seu tempo! 🙏",
     followup_menu: {
-      message: "O que você gostaria de fazer agora?\n\n1️⃣ Voltar ao menu principal\n2️⃣ Finalizar atendimento",
+      message: "Escolha uma opção:\n\n1️⃣ Voltar ao menu principal\n2️⃣ Finalizar atendimento",
       options: {
         "1": "main_menu",
         "2": "end_session"

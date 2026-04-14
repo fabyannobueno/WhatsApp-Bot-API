@@ -3,6 +3,7 @@ export type SessionState =
   | 'main_menu'
   | 'awaiting_followup'
   | 'awaiting_evaluation'
+  | 'awaiting_final_followup'
   | 'transferred'
   | 'ended';
 
