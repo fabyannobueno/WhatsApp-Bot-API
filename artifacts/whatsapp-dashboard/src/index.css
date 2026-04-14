@@ -55,7 +55,7 @@ body {
   line-height: 1.2;
 }
 
-.green { color: #25d366; }
+.green { color: #181AF7; }
 
 .subtitle {
   font-size: 12px;
@@ -89,7 +89,7 @@ body {
   margin-bottom: 24px;
 }
 
-.badge-green  { background: #0d2a1a; color: #25d366; border: 1px solid #1a4a2a; }
+.badge-green  { background: #0d0e2a; color: #181AF7; border: 1px solid #1a1c55; }
 .badge-yellow { background: #2a2000; color: #f5b942; border: 1px solid #4a3800; }
 .badge-blue   { background: #0d1f33; color: #58a6ff; border: 1px solid #1a3a55; }
 .badge-gray   { background: #1c2128; color: #8b949e; border: 1px solid #30363d; }
@@ -166,7 +166,7 @@ body {
 .connected-title {
   font-size: 22px;
   font-weight: 700;
-  color: #25d366;
+  color: #181AF7;
 }
 
 .connected-sub {
@@ -241,7 +241,7 @@ body {
   width: 44px;
   height: 44px;
   border: 3px solid #21262d;
-  border-top-color: #25d366;
+  border-top-color: #181AF7;
   border-radius: 50%;
   animation: spin 0.75s linear infinite;
 }
