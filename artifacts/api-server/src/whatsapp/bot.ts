@@ -139,26 +139,8 @@ async function processMessage(msg: WhatsAppMessage): Promise<void> {
       evalResponse = botMessages.system.evaluation_responses.medium_rating;
     }
 
+    endSession(phone);
     await send(chatId, evalResponse);
-    await send(chatId, botMessages.system.followup_menu.message);
-    updateSession(phone, { state: 'awaiting_final_followup' });
-    return;
-  }
-
-  if (session.state === 'awaiting_final_followup') {
-    const followupOptions = botMessages.system.followup_menu.options;
-    const choice = followupOptions[body];
-
-    if (choice === 'main_menu') {
-      updateSession(phone, { state: 'main_menu' });
-      await send(chatId, botMessages.main_menu.message);
-    } else if (choice === 'end_session') {
-      endSession(phone);
-      await send(chatId, botMessages.responses.end_session.message);
-    } else {
-      await send(chatId, botMessages.system.invalid_option.message);
-      await send(chatId, botMessages.system.followup_menu.message);
-    }
     return;
   }
 
