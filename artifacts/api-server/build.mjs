@@ -101,6 +101,7 @@ async function buildAll() {
       "puppeteer-core",
       "whatsapp-web.js",
       "qrcode-terminal",
+      "qrcode",
       "electron",
     ],
     sourcemap: "linked",

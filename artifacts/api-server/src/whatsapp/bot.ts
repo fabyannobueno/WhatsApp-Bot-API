@@ -17,19 +17,16 @@ import {
 
 const require = createRequire(import.meta.url);
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { Client, LocalAuth } = require('whatsapp-web.js') as {
   Client: new (options: Record<string, unknown>) => WhatsAppClient;
   LocalAuth: new (options?: Record<string, unknown>) => unknown;
 };
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const qrcode = require('qrcode-terminal') as { generate: (text: string, opts: Record<string, unknown>) => void };
 
 interface WhatsAppMessage {
   from: string;
   fromMe: boolean;
   body: string;
-  reply: (msg: string) => Promise<void>;
   getContact: () => Promise<{ pushname?: string; name?: string }>;
 }
 
@@ -51,6 +48,21 @@ function isGreeting(text: string): boolean {
   return GREETING_TRIGGERS.includes(text.toLowerCase().trim());
 }
 
+function extractPhone(from: string): string {
+  return from.replace(/@[^@]+$/, '');
+}
+
+function isValidChat(from: string): boolean {
+  if (from === 'status@broadcast') return false;
+  if (from.endsWith('@g.us')) return false;
+  return true;
+}
+
+async function send(chatId: string, text: string): Promise<void> {
+  if (!client || !clientReady) return;
+  await client.sendMessage(chatId, text);
+}
+
 async function handleTimeout(phoneNumber: string): Promise<void> {
   const session = getSession(phoneNumber);
   if (!session || session.state === 'ended') return;
@@ -66,17 +78,22 @@ async function handleTimeout(phoneNumber: string): Promise<void> {
 
 async function processMessage(msg: WhatsAppMessage): Promise<void> {
   if (!client || !clientReady) return;
+  if (!isValidChat(msg.from)) return;
 
-  const phone = msg.from.replace('@c.us', '');
+  const phone = extractPhone(msg.from);
   const body = msg.body?.trim() ?? '';
 
-  logger.info({ phone, body: body.slice(0, 50) }, 'Incoming WhatsApp message');
+  if (!body) return;
+
+  logger.info({ phone, body: body.slice(0, 80) }, 'Processing message');
+
+  const chatId = msg.from;
 
   let session = getSession(phone);
 
   if (!session) {
-    if (!isGreeting(body) && body !== '') {
-      await msg.reply(botMessages.system.session_ended_message);
+    if (!isGreeting(body)) {
+      await send(chatId, botMessages.system.session_ended_message);
       return;
     }
 
@@ -84,8 +101,8 @@ async function processMessage(msg: WhatsAppMessage): Promise<void> {
     const contact = await msg.getContact();
     const name = contact.pushname || contact.name || 'cliente';
     const welcomeMsg = getMessage('welcome', { name });
-    await msg.reply(welcomeMsg);
-    await msg.reply(botMessages.main_menu.message);
+    await send(chatId, welcomeMsg);
+    await send(chatId, botMessages.main_menu.message);
     setSessionTimeout(phone, handleTimeout);
     return;
   }
@@ -96,7 +113,7 @@ async function processMessage(msg: WhatsAppMessage): Promise<void> {
   if (session.state === 'ended') {
     endSession(phone);
     createSession(phone);
-    await msg.reply(botMessages.main_menu.message);
+    await send(chatId, botMessages.main_menu.message);
     return;
   }
 
@@ -114,8 +131,8 @@ async function processMessage(msg: WhatsAppMessage): Promise<void> {
       evalResponse = botMessages.system.evaluation_responses.medium_rating;
     }
 
-    await msg.reply(evalResponse);
-    await msg.reply(botMessages.system.followup_menu.message);
+    await send(chatId, evalResponse);
+    await send(chatId, botMessages.system.followup_menu.message);
     updateSession(phone, { state: 'awaiting_followup' });
     return;
   }
@@ -126,13 +143,13 @@ async function processMessage(msg: WhatsAppMessage): Promise<void> {
 
     if (choice === 'main_menu') {
       updateSession(phone, { state: 'main_menu' });
-      await msg.reply(botMessages.main_menu.message);
+      await send(chatId, botMessages.main_menu.message);
     } else if (choice === 'end_session') {
       endSession(phone);
-      await msg.reply(botMessages.responses.end_session.message);
+      await send(chatId, botMessages.responses.end_session.message);
     } else {
-      await msg.reply(botMessages.system.invalid_option.message);
-      await msg.reply(botMessages.system.followup_menu.message);
+      await send(chatId, botMessages.system.invalid_option.message);
+      await send(chatId, botMessages.system.followup_menu.message);
     }
     return;
   }
@@ -160,19 +177,19 @@ async function processMessage(msg: WhatsAppMessage): Promise<void> {
     }
 
     if (!selectedKey) {
-      await msg.reply(botMessages.system.invalid_option.message);
-      await msg.reply(botMessages.main_menu.message);
+      await send(chatId, botMessages.system.invalid_option.message);
+      await send(chatId, botMessages.main_menu.message);
       return;
     }
 
     const response = botMessages.responses[selectedKey];
     if (!response) {
-      await msg.reply(botMessages.system.error_message);
-      await msg.reply(botMessages.main_menu.message);
+      await send(chatId, botMessages.system.error_message);
+      await send(chatId, botMessages.main_menu.message);
       return;
     }
 
-    await msg.reply(response.message);
+    await send(chatId, response.message);
 
     const action = getResponseAction(selectedKey);
 
@@ -183,19 +200,19 @@ async function processMessage(msg: WhatsAppMessage): Promise<void> {
     }
 
     if (action === 'close') {
-      await msg.reply(botMessages.system.evaluation_message);
+      await send(chatId, botMessages.system.evaluation_message);
       updateSession(phone, { state: 'awaiting_evaluation' });
       return;
     }
 
     if (response.next === 'main_menu') {
-      await msg.reply(botMessages.main_menu.message);
+      await send(chatId, botMessages.main_menu.message);
     }
 
     return;
   }
 
-  await msg.reply(botMessages.main_menu.message);
+  await send(chatId, botMessages.main_menu.message);
   updateSession(phone, { state: 'main_menu' });
 }
 
@@ -275,7 +292,8 @@ export async function sendMessage(to: string, message: string): Promise<{ succes
   }
 
   try {
-    const chatId = to.includes('@c.us') ? to : `${to}@c.us`;
+    const phone = to.replace(/\D/g, '');
+    const chatId = `${phone}@c.us`;
     await client.sendMessage(chatId, message);
     logger.info({ to }, 'Message sent via API');
     return { success: true };
