@@ -198,6 +198,36 @@ body {
   letter-spacing: 0.5px;
 }
 
+/* DISCONNECT */
+.disconnect-btn {
+  margin-top: 8px;
+  background: transparent;
+  border: 1px solid #4a2020;
+  color: #f85149;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.disconnect-btn:hover:not(:disabled) {
+  background: #2d1b1b;
+  border-color: #f85149;
+}
+
+.disconnect-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.disconnect-msg {
+  font-size: 13px;
+  color: #58a6ff;
+  text-align: center;
+}
+
 /* INIT / LOADING */
 .spinner {
   width: 44px;

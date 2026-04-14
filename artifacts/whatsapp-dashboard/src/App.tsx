@@ -91,6 +91,24 @@ function QrView({ qrTs }: { qrTs: number }) {
 }
 
 function ConnectedView({ sessions }: { sessions: number }) {
+  const [disconnecting, setDisconnecting] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+
+  async function handleDisconnect() {
+    if (!confirm("Tem certeza que deseja desconectar o dispositivo? Será necessário escanear o QR Code novamente.")) return;
+    setDisconnecting(true);
+    setMsg(null);
+    try {
+      const r = await fetch(BASE + "/disconnect", { method: "POST" });
+      const data = await r.json();
+      setMsg(data.message || "Desconectado.");
+    } catch {
+      setMsg("Erro ao desconectar.");
+    } finally {
+      setDisconnecting(false);
+    }
+  }
+
   return (
     <div className="section centered">
       <div className="check-icon">✅</div>
@@ -102,6 +120,14 @@ function ConnectedView({ sessions }: { sessions: number }) {
           <span className="stat-label">Sessões ativas</span>
         </div>
       </div>
+      {msg && <p className="disconnect-msg">{msg}</p>}
+      <button
+        className="disconnect-btn"
+        onClick={handleDisconnect}
+        disabled={disconnecting}
+      >
+        {disconnecting ? "Desconectando…" : "🔌 Desconectar dispositivo"}
+      </button>
     </div>
   );
 }
@@ -158,6 +184,7 @@ export default function App() {
           <div className="endpoint"><span className="method get">GET</span><code>/api/whatsapp/status</code></div>
           <div className="endpoint"><span className="method post">POST</span><code>/api/whatsapp/send</code></div>
           <div className="endpoint"><span className="method get">GET</span><code>/api/whatsapp/sessions</code></div>
+          <div className="endpoint"><span className="method post">POST</span><code>/api/whatsapp/disconnect</code></div>
         </div>
       </div>
 

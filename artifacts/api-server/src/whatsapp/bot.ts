@@ -349,6 +349,26 @@ export async function sendMessage(to: string, message: string): Promise<{ succes
   }
 }
 
+export async function disconnectBot(): Promise<void> {
+  if (retryTimeout) {
+    clearTimeout(retryTimeout);
+    retryTimeout = null;
+  }
+  clientReady = false;
+  qrCodeData = null;
+  initializationError = null;
+  if (client) {
+    try {
+      await client.destroy();
+    } catch (err) {
+      logger.warn({ err }, 'Error destroying WhatsApp client during disconnect');
+    }
+    client = null;
+  }
+  clearChromiumLocks();
+  logger.info('WhatsApp bot disconnected by user request');
+}
+
 export function getBotStatus(): {
   ready: boolean;
   qrCode: string | null;

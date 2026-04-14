@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { sendMessage, getBotStatus } from '../whatsapp/bot.js';
+import { sendMessage, getBotStatus, disconnectBot, initWhatsAppBot } from '../whatsapp/bot.js';
 import { getAllSessions, getSessionCount } from '../whatsapp/session.js';
 import { createRequire } from 'node:module';
 
@@ -296,6 +296,16 @@ router.get('/whatsapp/sessions', (req, res) => {
   }));
 
   res.json({ count: sessions.length, sessions });
+});
+
+router.post('/whatsapp/disconnect', async (req, res) => {
+  try {
+    await disconnectBot();
+    initWhatsAppBot();
+    res.json({ success: true, message: 'Dispositivo desconectado. Aguarde o novo QR Code.' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Falha ao desconectar' });
+  }
 });
 
 export default router;

@@ -1,55 +1,42 @@
-2026/04/14-22:49:05.302 1d24 Reusing MANIFEST /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
-2026/04/14-22:49:05.303 1d24 Recovering log #889
-2026/04/14-22:49:05.319 1d24 Reusing old log /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000889.log 
-2026/04/14-22:49:06.865 1d25 Manual compaction at level-0 from '\x001\x00\x00\x00' @ 72057594037927935 : 1 .. '\x002\x00\x00\x00' @ 0 : 0; will stop at (end)
-2026/04/14-22:49:07.880 1d26 Compacting 1@1 + 2@2 files
-2026/04/14-22:49:07.986 1d26 Generated table #904@1: 42415 keys, 2238676 bytes
-2026/04/14-22:49:08.021 1d26 Generated table #905@1: 29544 keys, 695270 bytes
-2026/04/14-22:49:08.021 1d26 Compacted 1@1 + 2@2 files => 2933946 bytes
-2026/04/14-22:49:08.025 1d26 compacted to: files[ 0 0 16 0 0 0 0 ]
-2026/04/14-22:49:08.025 1d26 Delete type=2 #887
-2026/04/14-22:49:08.025 1d26 Delete type=2 #888
-2026/04/14-22:49:08.025 1d26 Delete type=2 #892
-2026/04/14-22:49:14.519 1d24 Level-0 table #907: started
-2026/04/14-22:49:14.585 1d24 Level-0 table #907: 1117864 bytes OK
-2026/04/14-22:49:14.607 1d24 Delete type=0 #889
-2026/04/14-22:49:14.613 1d26 Compacting 1@0 + 0@1 files
-2026/04/14-22:49:14.651 1d26 Generated table #908@0: 35043 keys, 673960 bytes
-2026/04/14-22:49:14.664 1d26 Generated table #909@0: 70 keys, 15708 bytes
-2026/04/14-22:49:14.664 1d26 Compacted 1@0 + 0@1 files => 689668 bytes
-2026/04/14-22:49:14.668 1d26 compacted to: files[ 0 2 16 0 0 0 0 ]
-2026/04/14-22:49:14.670 1d26 Compacting 1@1 + 12@2 files
-2026/04/14-22:49:14.760 1d26 Generated table #910@1: 89152 keys, 2240331 bytes
-2026/04/14-22:49:14.835 1d26 Generated table #911@1: 97351 keys, 2248709 bytes
-2026/04/14-22:49:14.910 1d26 Generated table #912@1: 101479 keys, 2254786 bytes
-2026/04/14-22:49:14.980 1d26 Generated table #913@1: 35808 keys, 2329824 bytes
-2026/04/14-22:49:15.038 1d26 Generated table #914@1: 17922 keys, 2193452 bytes
-2026/04/14-22:49:15.116 1d26 Generated table #915@1: 28847 keys, 2213341 bytes
-2026/04/14-22:49:15.190 1d26 Generated table #916@1: 28915 keys, 2213520 bytes
-2026/04/14-22:49:15.272 1d26 Generated table #917@1: 45363 keys, 2225905 bytes
-2026/04/14-22:49:15.371 1d26 Generated table #918@1: 69331 keys, 2255356 bytes
-2026/04/14-22:49:15.427 1d26 Generated table #919@1: 14352 keys, 818106 bytes
-2026/04/14-22:49:15.427 1d26 Compacted 1@1 + 12@2 files => 20993330 bytes
-2026/04/14-22:49:15.431 1d26 compacted to: files[ 0 1 14 0 0 0 0 ]
-2026/04/14-22:49:15.431 1d26 Delete type=2 #907
-2026/04/14-22:49:48.832 1d2d Compacting 1@1 + 2@2 files
-2026/04/14-22:49:48.996 1d2d Generated table #920@1: 42073 keys, 2239352 bytes
-2026/04/14-22:49:49.033 1d2d Generated table #921@1: 29896 keys, 706044 bytes
-2026/04/14-22:49:49.033 1d2d Compacted 1@1 + 2@2 files => 2945396 bytes
-2026/04/14-22:49:49.048 1d2d compacted to: files[ 0 0 14 0 0 0 0 ]
-2026/04/14-22:49:49.048 1d2d Delete type=2 #870
-2026/04/14-22:49:49.048 1d2d Delete type=2 #886
-2026/04/14-22:49:49.048 1d2d Delete type=2 #893
-2026/04/14-22:49:49.049 1d2d Delete type=2 #894
-2026/04/14-22:49:49.049 1d2d Delete type=2 #895
-2026/04/14-22:49:49.049 1d2d Delete type=2 #896
-2026/04/14-22:49:49.049 1d2d Delete type=2 #897
-2026/04/14-22:49:49.049 1d2d Delete type=2 #898
-2026/04/14-22:49:49.049 1d2d Delete type=2 #899
-2026/04/14-22:49:49.050 1d2d Delete type=2 #900
-2026/04/14-22:49:49.050 1d2d Delete type=2 #901
-2026/04/14-22:49:49.050 1d2d Delete type=2 #902
-2026/04/14-22:49:49.050 1d2d Delete type=2 #904
-2026/04/14-22:49:49.050 1d2d Delete type=2 #905
-2026/04/14-22:49:49.050 1d2d Delete type=2 #908
-2026/04/14-22:49:49.050 1d2d Delete type=2 #909
+2026/04/14-23:10:21.556 672 Reusing MANIFEST /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/04/14-23:10:21.557 672 Recovering log #923
+2026/04/14-23:10:21.679 672 Reusing old log /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000923.log 
+2026/04/14-23:10:23.179 671 Level-0 table #940: started
+2026/04/14-23:10:23.239 671 Level-0 table #940: 1059104 bytes OK
+2026/04/14-23:10:23.245 671 Delete type=0 #923
+2026/04/14-23:10:23.246 672 Manual compaction at level-0 from '\x003\x00\x00\x00' @ 72057594037927935 : 1 .. '\x004\x00\x00\x00' @ 0 : 0; will stop at '\x003\x00\x00\x05' @ 3890729 : 1
+2026/04/14-23:10:23.246 672 Compacting 1@0 + 0@1 files
+2026/04/14-23:10:23.293 672 Generated table #941@0: 24792 keys, 467604 bytes
+2026/04/14-23:10:23.296 672 Generated table #942@0: 343 keys, 12699 bytes
+2026/04/14-23:10:23.296 672 Compacted 1@0 + 0@1 files => 480303 bytes
+2026/04/14-23:10:23.310 672 compacted to: files[ 0 2 14 0 0 0 0 ]
+2026/04/14-23:10:23.311 672 Delete type=2 #940
+2026/04/14-23:10:23.311 672 Manual compaction at level-0 from '\x003\x00\x00\x05' @ 3890729 : 1 .. '\x004\x00\x00\x00' @ 0 : 0; will stop at (end)
+2026/04/14-23:10:23.322 67b Compacting 1@1 + 9@2 files
+2026/04/14-23:10:23.602 67b Generated table #943@1: 88456 keys, 2239064 bytes
+2026/04/14-23:10:23.888 67b Generated table #944@1: 97555 keys, 2249169 bytes
+2026/04/14-23:10:24.015 67b Generated table #945@1: 101479 keys, 2254157 bytes
+2026/04/14-23:10:24.098 67b Generated table #946@1: 34704 keys, 2333095 bytes
+2026/04/14-23:10:24.181 67b Generated table #947@1: 17652 keys, 2191769 bytes
+2026/04/14-23:10:24.300 67b Generated table #948@1: 28848 keys, 2213101 bytes
+2026/04/14-23:10:24.396 67b Generated table #949@1: 28898 keys, 2213120 bytes
+2026/04/14-23:10:24.521 67b Generated table #950@1: 44662 keys, 2226429 bytes
+2026/04/14-23:10:24.632 67b Generated table #951@1: 69898 keys, 2255303 bytes
+2026/04/14-23:10:24.642 67b Generated table #952@1: 642 keys, 37026 bytes
+2026/04/14-23:10:24.642 67b Compacted 1@1 + 9@2 files => 20212233 bytes
+2026/04/14-23:10:24.646 67b compacted to: files[ 0 1 15 0 0 0 0 ]
+2026/04/14-23:10:24.646 67b Delete type=2 #929
+2026/04/14-23:10:24.646 67b Delete type=2 #930
+2026/04/14-23:10:24.646 67b Delete type=2 #931
+2026/04/14-23:10:24.647 67b Delete type=2 #932
+2026/04/14-23:10:24.647 67b Delete type=2 #933
+2026/04/14-23:10:24.647 67b Delete type=2 #934
+2026/04/14-23:10:24.647 67b Delete type=2 #935
+2026/04/14-23:10:24.647 67b Delete type=2 #936
+2026/04/14-23:10:24.647 67b Delete type=2 #937
+2026/04/14-23:10:24.647 67b Delete type=2 #941
+2026/04/14-23:10:26.140 67a Compacting 1@1 + 2@2 files
+2026/04/14-23:10:26.361 67a Generated table #953@1: 41610 keys, 2238713 bytes
+2026/04/14-23:10:26.401 67a Generated table #954@1: 31929 keys, 748877 bytes
+2026/04/14-23:10:26.401 67a Compacted 1@1 + 2@2 files => 2987590 bytes
+2026/04/14-23:10:26.416 67a compacted to: files[ 0 0 15 0 0 0 0 ]
