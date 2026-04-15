@@ -177,7 +177,7 @@ export default function App() {
           <img src="https://isound.digital/logos/isound-favicon%20(1).svg" alt="iSound" className="logo-img" />
         </div>
         <div>
-          <h1 className="title"><span className="green">iSound</span> WhatsApp Bot</h1>
+          <h1 className="title">iSound WhatsApp Bot</h1>
           <p className="subtitle">Dashboard de Gerenciamento</p>
         </div>
       </header>
