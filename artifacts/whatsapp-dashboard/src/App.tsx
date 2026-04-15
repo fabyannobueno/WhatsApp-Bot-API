@@ -206,6 +206,10 @@ export default function App() {
       </div>
 
       <p className="footer-note">Atualiza automaticamente a cada 3 segundos</p>
+
+      <footer className="footer-copyright">
+        &copy; {new Date().getFullYear()} iSound. Todos os direitos reservados.
+      </footer>
     </div>
   );
 }

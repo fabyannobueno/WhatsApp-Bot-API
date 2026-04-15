@@ -342,3 +342,10 @@ body {
   color: #30363d;
   text-align: center;
 }
+
+.footer-copyright {
+  font-size: 11px;
+  color: #30363d;
+  text-align: center;
+  padding-bottom: 8px;
+}
