@@ -417,9 +417,14 @@ export async function sendMessage(to: string, message: string): Promise<{ succes
 
   try {
     const phone = to.replace(/\D/g, '');
-    const chatId = `${phone}@c.us`;
-    await client.sendMessage(chatId, message);
-    logger.info({ to }, 'Message sent via API');
+
+    const numberId = await (client as any).getNumberId(phone);
+    if (!numberId) {
+      return { success: false, error: `Número ${phone} não encontrado no WhatsApp.` };
+    }
+
+    await client.sendMessage(numberId._serialized, message);
+    logger.info({ to, chatId: numberId._serialized }, 'Message sent via API');
     return { success: true };
   } catch (err) {
     const errorMsg = err instanceof Error ? err.message : String(err);
