@@ -1,0 +1,11 @@
+node_modules
+**/node_modules
+**/dist
+**/.wwebjs_auth
+**/.wwebjs_cache
+**/tsconfig.tsbuildinfo
+artifacts/mockup-sandbox
+.git
+.replit
+replit.nix
+.local

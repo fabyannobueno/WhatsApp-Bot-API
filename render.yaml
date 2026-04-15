@@ -1,13 +1,9 @@
 services:
   - type: web
     name: isound-whatsapp-bot
-    runtime: node
+    runtime: docker
     plan: starter
     region: oregon
-
-    buildCommand: chmod +x ./scripts/render-build.sh && ./scripts/render-build.sh
-
-    startCommand: node --enable-source-maps artifacts/api-server/dist/index.mjs
 
     healthCheckPath: /api/healthz
 
@@ -17,10 +13,6 @@ services:
       sizeGB: 1
 
     envVars:
-      - key: NODE_ENV
-        value: production
-      - key: CHROME_EXECUTABLE
-        value: /usr/bin/google-chrome-stable
       - key: WWEBJS_DATA_PATH
         value: /data/.wwebjs_auth
       - key: WHATSAPP_API_KEY
