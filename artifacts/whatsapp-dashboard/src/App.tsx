@@ -195,13 +195,13 @@ export default function App() {
       <div className="api-card">
         <h3 className="api-title">Enviar Mensagem via API</h3>
         <div className="code-block">
-          <pre>{`POST /api/whatsapp/send\nContent-Type: application/json\nx-api-key: SUA_API_KEY\n\n{\n  "to": "551199999999",\n  "message": "Sua mensagem aqui"\n}`}</pre>
+          <pre>{`POST ${window.location.origin}/api/whatsapp/send\nContent-Type: application/json\nx-api-key: SUA_API_KEY\n\n{\n  "to": "551199999999",\n  "message": "Sua mensagem aqui"\n}`}</pre>
         </div>
         <div className="endpoints">
-          <div className="endpoint"><span className="method get">GET</span><code>/api/whatsapp/status</code></div>
-          <div className="endpoint"><span className="method post">POST</span><code>/api/whatsapp/send</code></div>
-          <div className="endpoint"><span className="method get">GET</span><code>/api/whatsapp/sessions</code></div>
-          <div className="endpoint"><span className="method post">POST</span><code>/api/whatsapp/disconnect</code></div>
+          <div className="endpoint"><span className="method get">GET</span><code>{window.location.origin}/api/whatsapp/status</code></div>
+          <div className="endpoint"><span className="method post">POST</span><code>{window.location.origin}/api/whatsapp/send</code></div>
+          <div className="endpoint"><span className="method get">GET</span><code>{window.location.origin}/api/whatsapp/sessions</code></div>
+          <div className="endpoint"><span className="method post">POST</span><code>{window.location.origin}/api/whatsapp/disconnect</code></div>
         </div>
       </div>
 
