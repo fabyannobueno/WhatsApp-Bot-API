@@ -1,3 +1,3 @@
-2026/04/15-01:51:51.114 ec3 Reusing MANIFEST /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/GCM Store/MANIFEST-000001
-2026/04/15-01:51:51.114 ec3 Recovering log #3
-2026/04/15-01:51:51.114 ec3 Reusing old log /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/GCM Store/000003.log 
+2026/04/15-02:20:00.041 afb Reusing MANIFEST /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/GCM Store/MANIFEST-000001
+2026/04/15-02:20:00.041 afb Recovering log #3
+2026/04/15-02:20:00.041 afb Reusing old log /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/GCM Store/000003.log 
