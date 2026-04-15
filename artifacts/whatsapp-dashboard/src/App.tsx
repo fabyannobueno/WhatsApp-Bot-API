@@ -231,6 +231,7 @@ async function runRequest(
 function StatusEndpoint() {
   const url = `${window.location.origin}/api/whatsapp/status`;
   const curl = `curl ${url}`;
+  const curlDisplay = `curl /api/whatsapp/status`;
   const [res, setRes] = useState<EndpointResult>({ loading: false, status: null, body: null, error: null });
 
   async function run() {
@@ -252,7 +253,7 @@ function StatusEndpoint() {
       </div>
       <div className="ep-curl">
         <span className="curl-label">curl</span>
-        <code>{curl}</code>
+        <code>{curlDisplay}</code>
         <CopyButton text={curl} />
       </div>
       <button className="test-btn" onClick={run} disabled={res.loading}>▶ Testar</button>
@@ -269,6 +270,7 @@ function SendEndpoint() {
 
   const url  = `${window.location.origin}/api/whatsapp/send`;
   const curl = `curl -X POST ${url} \\\n  -H "Content-Type: application/json" \\\n  -H "x-api-key: SUA_API_KEY" \\\n  -d '{"to":"551199999999","message":"Olá!"}'`;
+  const curlDisplay = `curl -X POST /api/whatsapp/send \\\n  -H "Content-Type: application/json" \\\n  -H "x-api-key: SUA_API_KEY" \\\n  -d '{"to":"551199999999","message":"Olá!"}'`;
 
   async function run() {
     setRes({ loading: true, status: null, body: null, error: null });
@@ -289,7 +291,7 @@ function SendEndpoint() {
       </div>
       <div className="ep-curl">
         <span className="curl-label">curl</span>
-        <code style={{ whiteSpace: "pre" }}>{curl}</code>
+        <code style={{ whiteSpace: "pre" }}>{curlDisplay}</code>
         <CopyButton text={curl} />
       </div>
       <div className="ep-form">

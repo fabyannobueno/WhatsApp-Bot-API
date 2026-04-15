@@ -333,8 +333,8 @@ body {
   letter-spacing: 0.3px;
 }
 
-.method.get  { background: #0d2233; color: #58a6ff; border: 1px solid #1a4466; }
-.method.post { background: #1a2e0d; color: #56d364; border: 1px solid #2d5a1a; }
+.method.get  { background: #1a2e0d; color: #56d364; border: 1px solid #2d5a1a; }
+.method.post { background: #0d2233; color: #58a6ff; border: 1px solid #1a4466; }
 
 /* API DOCS */
 .api-docs-card {
