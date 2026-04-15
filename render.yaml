@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: isound-whatsapp-bot
+    runtime: node
+    plan: starter
+    region: oregon
+
+    buildCommand: >
+      npm install -g pnpm@9 &&
+      pnpm install --frozen-lockfile &&
+      BASE_PATH=/ pnpm --filter @workspace/whatsapp-dashboard run build &&
+      pnpm --filter @workspace/api-server run build
+
+    startCommand: node --enable-source-maps artifacts/api-server/dist/index.mjs
+
+    healthCheckPath: /api/healthz
+
+    disk:
+      name: whatsapp-auth
+      mountPath: /data
+      sizeGB: 1
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: WWEBJS_DATA_PATH
+        value: /data/.wwebjs_auth
+      - key: WHATSAPP_API_KEY
+        sync: false

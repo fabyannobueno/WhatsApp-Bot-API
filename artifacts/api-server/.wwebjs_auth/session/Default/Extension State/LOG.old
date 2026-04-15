@@ -1,3 +1,2 @@
-2026/04/15-02:19:18.186 990 Reusing MANIFEST /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/Extension State/MANIFEST-000001
-2026/04/15-02:19:18.186 990 Recovering log #3
-2026/04/15-02:19:18.186 990 Reusing old log /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/Extension State/000003.log 
+2026/04/15-03:19:20.103 155 Creating DB /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/Extension State since it was missing.
+2026/04/15-03:19:20.364 155 Reusing MANIFEST /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/Extension State/MANIFEST-000001

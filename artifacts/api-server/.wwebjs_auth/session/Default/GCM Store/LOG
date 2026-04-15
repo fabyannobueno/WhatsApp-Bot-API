@@ -1,3 +1,2 @@
-2026/04/15-02:20:00.041 afb Reusing MANIFEST /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/GCM Store/MANIFEST-000001
-2026/04/15-02:20:00.041 afb Recovering log #3
-2026/04/15-02:20:00.041 afb Reusing old log /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/GCM Store/000003.log 
+2026/04/15-03:19:31.368 156 Creating DB /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/GCM Store since it was missing.
+2026/04/15-03:19:31.375 156 Reusing MANIFEST /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/GCM Store/MANIFEST-000001

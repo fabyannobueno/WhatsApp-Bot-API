@@ -1,3 +1,2 @@
-2026/04/15-02:19:16.701 9b2 Reusing MANIFEST /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/Local Storage/leveldb/MANIFEST-000001
-2026/04/15-02:19:16.708 9b2 Recovering log #3
-2026/04/15-02:19:16.709 9b2 Reusing old log /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/Local Storage/leveldb/000003.log 
+2026/04/15-03:19:18.367 172 Creating DB /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/Local Storage/leveldb since it was missing.
+2026/04/15-03:19:18.391 172 Reusing MANIFEST /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/Local Storage/leveldb/MANIFEST-000001

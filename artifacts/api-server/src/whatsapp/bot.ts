@@ -20,6 +20,10 @@ import {
 
 const require = createRequire(import.meta.url);
 
+function getAuthDataPath(): string {
+  return process.env['WWEBJS_DATA_PATH'] ?? join(process.cwd(), '.wwebjs_auth');
+}
+
 const { Client, LocalAuth } = require('whatsapp-web.js') as {
   Client: new (options: Record<string, unknown>) => WhatsAppClient;
   LocalAuth: new (options?: Record<string, unknown>) => unknown;
@@ -264,19 +268,19 @@ function killPidFromLock(profileDir: string): void {
 }
 
 function nukeAuthDir(): void {
-  const authDir = join(process.cwd(), '.wwebjs_auth');
+  const authDir = getAuthDataPath();
   if (existsSync(authDir)) {
     try {
       rmSync(authDir, { recursive: true, force: true });
-      logger.info('Deleted entire .wwebjs_auth to allow clean Chromium start');
+      logger.info({ authDir }, 'Deleted entire auth dir to allow clean Chromium start');
     } catch (err) {
-      logger.warn({ err }, 'Could not delete .wwebjs_auth');
+      logger.warn({ err }, 'Could not delete auth dir');
     }
   }
 }
 
 function clearChromiumLocks(): void {
-  const profileDir = join(process.cwd(), '.wwebjs_auth', 'session');
+  const profileDir = join(getAuthDataPath(), 'session');
 
   killPidFromLock(profileDir);
 
@@ -307,6 +311,18 @@ function clearChromiumLocks(): void {
   }
 }
 
+function resolveChromiumPath(): string | undefined {
+  if (process.env['CHROME_EXECUTABLE']) return process.env['CHROME_EXECUTABLE'];
+  try {
+    const result = execSync(
+      'which chromium 2>/dev/null || which chromium-browser 2>/dev/null || which google-chrome 2>/dev/null || echo ""',
+      { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] },
+    ).trim();
+    if (result) return result;
+  } catch { }
+  return undefined;
+}
+
 export function initWhatsAppBot(): void {
   logger.info('Initializing WhatsApp bot...');
 
@@ -315,14 +331,17 @@ export function initWhatsAppBot(): void {
 
   clearChromiumLocks();
 
-  const executablePath = process.env['CHROME_EXECUTABLE'] || '/nix/store/qa9cnw4v5xkxyip6mb9kxqfq1z4x2dx1-chromium-138.0.7204.100/bin/chromium';
+  const executablePath = resolveChromiumPath();
+  const dataPath = getAuthDataPath();
+
+  logger.info({ executablePath: executablePath ?? '(puppeteer default)', dataPath }, 'Starting WhatsApp client');
 
   const newClient = new Client({
     authStrategy: new LocalAuth({
-      dataPath: './.wwebjs_auth',
+      dataPath,
     }),
     puppeteer: {
-      executablePath,
+      ...(executablePath ? { executablePath } : {}),
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
@@ -461,7 +480,7 @@ export async function disconnectBot(): Promise<void> {
     client = null;
   }
 
-  const authDir = join(process.cwd(), '.wwebjs_auth');
+  const authDir = getAuthDataPath();
   if (existsSync(authDir)) {
     try {
       rmSync(authDir, { recursive: true, force: true });
