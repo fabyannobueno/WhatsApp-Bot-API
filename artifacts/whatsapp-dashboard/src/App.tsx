@@ -317,6 +317,7 @@ function SendEndpoint() {
 function SessionsEndpoint() {
   const url  = `${window.location.origin}/api/whatsapp/sessions`;
   const curl = `curl ${url}`;
+  const curlDisplay = `curl /api/whatsapp/sessions`;
   const [res, setRes] = useState<EndpointResult>({ loading: false, status: null, body: null, error: null });
 
   async function run() {
@@ -338,7 +339,7 @@ function SessionsEndpoint() {
       </div>
       <div className="ep-curl">
         <span className="curl-label">curl</span>
-        <code>{curl}</code>
+        <code>{curlDisplay}</code>
         <CopyButton text={curl} />
       </div>
       <button className="test-btn" onClick={run} disabled={res.loading}>▶ Testar</button>
@@ -350,6 +351,7 @@ function SessionsEndpoint() {
 function DisconnectEndpoint() {
   const url  = `${window.location.origin}/api/whatsapp/disconnect`;
   const curl = `curl -X POST ${url}`;
+  const curlDisplay = `curl -X POST /api/whatsapp/disconnect`;
   const [res, setRes] = useState<EndpointResult>({ loading: false, status: null, body: null, error: null });
 
   async function run() {
@@ -372,7 +374,7 @@ function DisconnectEndpoint() {
       </div>
       <div className="ep-curl">
         <span className="curl-label">curl</span>
-        <code>{curl}</code>
+        <code>{curlDisplay}</code>
         <CopyButton text={curl} />
       </div>
       <button className="test-btn danger" onClick={run} disabled={res.loading}>▶ Testar</button>
