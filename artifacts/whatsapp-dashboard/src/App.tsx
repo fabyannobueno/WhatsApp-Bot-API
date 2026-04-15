@@ -57,18 +57,16 @@ function getViewState(data: StatusData | null, fetchError: boolean): ViewState {
 }
 
 function Spinner() {
-  return (
-    <div className="spinner" />
-  );
+  return <div className="spinner" />;
 }
 
 function StatusBadge({ state }: { state: ViewState }) {
   const map: Record<ViewState, { label: string; cls: string; pulse: boolean }> = {
-    connected: { label: "Bot Online", cls: "badge-green", pulse: false },
-    qr: { label: "Aguardando QR Code", cls: "badge-yellow", pulse: true },
-    initializing: { label: "Inicializando…", cls: "badge-blue", pulse: true },
-    loading: { label: "Verificando…", cls: "badge-gray", pulse: true },
-    error: { label: "Erro de conexão", cls: "badge-red", pulse: false },
+    connected:   { label: "Bot Online",        cls: "badge-green",  pulse: false },
+    qr:          { label: "Aguardando QR Code", cls: "badge-yellow", pulse: true  },
+    initializing:{ label: "Inicializando…",    cls: "badge-blue",   pulse: true  },
+    loading:     { label: "Verificando…",       cls: "badge-gray",   pulse: true  },
+    error:       { label: "Erro de conexão",    cls: "badge-red",    pulse: false },
   };
   const { label, cls, pulse } = map[state];
   return (
@@ -112,8 +110,8 @@ function ConnectedView({ sessions }: { sessions: number }) {
     setMsg(null);
     try {
       const r = await fetch(BASE + "/disconnect", { method: "POST" });
-      const data = await r.json();
-      setMsg(data.message || "Desconectado.");
+      const d = await r.json();
+      setMsg(d.message || "Desconectado.");
     } catch {
       setMsg("Erro ao desconectar.");
     } finally {
@@ -136,11 +134,7 @@ function ConnectedView({ sessions }: { sessions: number }) {
         </div>
       </div>
       {msg && <p className="disconnect-msg">{msg}</p>}
-      <button
-        className="disconnect-btn"
-        onClick={handleDisconnect}
-        disabled={disconnecting}
-      >
+      <button className="disconnect-btn" onClick={handleDisconnect} disabled={disconnecting}>
         {disconnecting ? "Desconectando…" : "🔌 Desconectar dispositivo"}
       </button>
     </div>
@@ -165,6 +159,206 @@ function ErrorView({ message }: { message?: string | null }) {
   );
 }
 
+// ─── API DOCS ─────────────────────────────────────────────────────────────────
+
+interface EndpointResult {
+  loading: boolean;
+  status: number | null;
+  body: string | null;
+  error: string | null;
+}
+
+function ResultBox({ result }: { result: EndpointResult }) {
+  if (result.loading) return <div className="result-box loading-result"><Spinner />Executando…</div>;
+  if (result.error)  return <div className="result-box error-result"><span className="res-label err">ERRO</span>{result.error}</div>;
+  if (result.body === null) return null;
+  const ok = result.status !== null && result.status < 400;
+  return (
+    <div className={`result-box ${ok ? "ok-result" : "error-result"}`}>
+      <span className={`res-label ${ok ? "ok" : "err"}`}>HTTP {result.status}</span>
+      <pre>{result.body}</pre>
+    </div>
+  );
+}
+
+async function runRequest(
+  method: string,
+  url: string,
+  headers?: Record<string, string>,
+  body?: object,
+): Promise<{ status: number; body: string }> {
+  const opts: RequestInit = { method, headers: { "Content-Type": "application/json", ...headers } };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(url, opts);
+  let text = "";
+  try { text = JSON.stringify(await r.json(), null, 2); } catch { text = await r.text(); }
+  return { status: r.status, body: text };
+}
+
+function StatusEndpoint() {
+  const url = `${window.location.origin}/api/whatsapp/status`;
+  const curl = `curl ${url}`;
+  const [res, setRes] = useState<EndpointResult>({ loading: false, status: null, body: null, error: null });
+
+  async function run() {
+    setRes({ loading: true, status: null, body: null, error: null });
+    try {
+      const { status, body } = await runRequest("GET", url);
+      setRes({ loading: false, status, body, error: null });
+    } catch (e) {
+      setRes({ loading: false, status: null, body: null, error: String(e) });
+    }
+  }
+
+  return (
+    <div className="ep-block">
+      <div className="ep-header">
+        <span className="method get">GET</span>
+        <code className="ep-path">/api/whatsapp/status</code>
+        <span className="ep-desc">Status do bot</span>
+      </div>
+      <div className="ep-curl">
+        <span className="curl-label">curl</span>
+        <code>{curl}</code>
+      </div>
+      <button className="test-btn" onClick={run} disabled={res.loading}>▶ Testar</button>
+      <ResultBox result={res} />
+    </div>
+  );
+}
+
+function SendEndpoint() {
+  const [to, setTo]         = useState("551199999999");
+  const [msg, setMsg]       = useState("Olá! Mensagem de teste.");
+  const [apiKey, setApiKey] = useState("");
+  const [res, setRes]       = useState<EndpointResult>({ loading: false, status: null, body: null, error: null });
+
+  const url  = `${window.location.origin}/api/whatsapp/send`;
+  const curl = `curl -X POST ${url} \\\n  -H "Content-Type: application/json" \\\n  -H "x-api-key: SUA_API_KEY" \\\n  -d '{"to":"551199999999","message":"Olá!"}'`;
+
+  async function run() {
+    setRes({ loading: true, status: null, body: null, error: null });
+    try {
+      const { status, body } = await runRequest("POST", url, { "x-api-key": apiKey }, { to, message: msg });
+      setRes({ loading: false, status, body, error: null });
+    } catch (e) {
+      setRes({ loading: false, status: null, body: null, error: String(e) });
+    }
+  }
+
+  return (
+    <div className="ep-block">
+      <div className="ep-header">
+        <span className="method post">POST</span>
+        <code className="ep-path">/api/whatsapp/send</code>
+        <span className="ep-desc">Enviar mensagem</span>
+      </div>
+      <div className="ep-curl">
+        <span className="curl-label">curl</span>
+        <code style={{ whiteSpace: "pre" }}>{curl}</code>
+      </div>
+      <div className="ep-form">
+        <label className="ep-field">
+          <span>x-api-key</span>
+          <input className="ep-input" type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} placeholder="sua chave de API" />
+        </label>
+        <label className="ep-field">
+          <span>to</span>
+          <input className="ep-input" value={to} onChange={e => setTo(e.target.value)} placeholder="551199999999" />
+        </label>
+        <label className="ep-field">
+          <span>message</span>
+          <input className="ep-input" value={msg} onChange={e => setMsg(e.target.value)} placeholder="Mensagem" />
+        </label>
+      </div>
+      <button className="test-btn" onClick={run} disabled={res.loading}>▶ Testar</button>
+      <ResultBox result={res} />
+    </div>
+  );
+}
+
+function SessionsEndpoint() {
+  const url  = `${window.location.origin}/api/whatsapp/sessions`;
+  const curl = `curl ${url}`;
+  const [res, setRes] = useState<EndpointResult>({ loading: false, status: null, body: null, error: null });
+
+  async function run() {
+    setRes({ loading: true, status: null, body: null, error: null });
+    try {
+      const { status, body } = await runRequest("GET", url);
+      setRes({ loading: false, status, body, error: null });
+    } catch (e) {
+      setRes({ loading: false, status: null, body: null, error: String(e) });
+    }
+  }
+
+  return (
+    <div className="ep-block">
+      <div className="ep-header">
+        <span className="method get">GET</span>
+        <code className="ep-path">/api/whatsapp/sessions</code>
+        <span className="ep-desc">Sessões ativas</span>
+      </div>
+      <div className="ep-curl">
+        <span className="curl-label">curl</span>
+        <code>{curl}</code>
+      </div>
+      <button className="test-btn" onClick={run} disabled={res.loading}>▶ Testar</button>
+      <ResultBox result={res} />
+    </div>
+  );
+}
+
+function DisconnectEndpoint() {
+  const url  = `${window.location.origin}/api/whatsapp/disconnect`;
+  const curl = `curl -X POST ${url}`;
+  const [res, setRes] = useState<EndpointResult>({ loading: false, status: null, body: null, error: null });
+
+  async function run() {
+    if (!confirm("Isso vai desconectar o bot. Continuar?")) return;
+    setRes({ loading: true, status: null, body: null, error: null });
+    try {
+      const { status, body } = await runRequest("POST", url);
+      setRes({ loading: false, status, body, error: null });
+    } catch (e) {
+      setRes({ loading: false, status: null, body: null, error: String(e) });
+    }
+  }
+
+  return (
+    <div className="ep-block">
+      <div className="ep-header">
+        <span className="method post">POST</span>
+        <code className="ep-path">/api/whatsapp/disconnect</code>
+        <span className="ep-desc">Desconectar bot</span>
+      </div>
+      <div className="ep-curl">
+        <span className="curl-label">curl</span>
+        <code>{curl}</code>
+      </div>
+      <button className="test-btn danger" onClick={run} disabled={res.loading}>▶ Testar</button>
+      <ResultBox result={res} />
+    </div>
+  );
+}
+
+function ApiDocs() {
+  return (
+    <div className="api-docs-card">
+      <h3 className="api-title">Referência da API</h3>
+      <p className="api-subtitle">Base URL: <code className="base-url">{window.location.origin}</code></p>
+      <div className="ep-list">
+        <StatusEndpoint />
+        <SendEndpoint />
+        <SessionsEndpoint />
+        <DisconnectEndpoint />
+      </div>
+    </div>
+  );
+}
+
+// ─── APP ─────────────────────────────────────────────────────────────────────
+
 export default function App() {
   const { data, fetchError } = useStatus();
   const state = getViewState(data, fetchError);
@@ -184,26 +378,14 @@ export default function App() {
 
       <div className="card">
         <StatusBadge state={state} />
-
-        {state === "qr" && <QrView qrTs={qrTs} />}
-        {state === "connected" && <ConnectedView sessions={data?.activeSessions ?? 0} />}
-        {state === "initializing" && <InitView />}
-        {state === "loading" && <InitView />}
-        {state === "error" && <ErrorView message={fetchError ? null : data?.error} />}
+        {state === "qr"          && <QrView qrTs={qrTs} />}
+        {state === "connected"   && <ConnectedView sessions={data?.activeSessions ?? 0} />}
+        {state === "initializing"&& <InitView />}
+        {state === "loading"     && <InitView />}
+        {state === "error"       && <ErrorView message={fetchError ? null : data?.error} />}
       </div>
 
-      <div className="api-card">
-        <h3 className="api-title">Enviar Mensagem via API</h3>
-        <div className="code-block">
-          <pre>{`POST ${window.location.origin}/api/whatsapp/send\nContent-Type: application/json\nx-api-key: SUA_API_KEY\n\n{\n  "to": "551199999999",\n  "message": "Sua mensagem aqui"\n}`}</pre>
-        </div>
-        <div className="endpoints">
-          <div className="endpoint"><span className="method get">GET</span><code>{window.location.origin}/api/whatsapp/status</code></div>
-          <div className="endpoint"><span className="method post">POST</span><code>{window.location.origin}/api/whatsapp/send</code></div>
-          <div className="endpoint"><span className="method get">GET</span><code>{window.location.origin}/api/whatsapp/sessions</code></div>
-          <div className="endpoint"><span className="method post">POST</span><code>{window.location.origin}/api/whatsapp/disconnect</code></div>
-        </div>
-      </div>
+      <ApiDocs />
 
       <p className="footer-note">Atualiza automaticamente a cada 3 segundos</p>
 
