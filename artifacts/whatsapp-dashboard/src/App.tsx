@@ -348,6 +348,40 @@ function SessionsEndpoint() {
   );
 }
 
+function PingEndpoint() {
+  const url = `${window.location.origin}/api/healthz`;
+  const curl = `curl ${url}`;
+  const curlDisplay = `curl /api/healthz`;
+  const [res, setRes] = useState<EndpointResult>({ loading: false, status: null, body: null, error: null });
+
+  async function run() {
+    setRes({ loading: true, status: null, body: null, error: null });
+    try {
+      const { status, body } = await runRequest("GET", url);
+      setRes({ loading: false, status, body, error: null });
+    } catch (e) {
+      setRes({ loading: false, status: null, body: null, error: String(e) });
+    }
+  }
+
+  return (
+    <div className="ep-block">
+      <div className="ep-header">
+        <span className="method get">GET</span>
+        <code className="ep-path">/api/healthz</code>
+        <span className="ep-desc">Ping / Health check</span>
+      </div>
+      <div className="ep-curl">
+        <span className="curl-label">curl</span>
+        <code>{curlDisplay}</code>
+        <CopyButton text={curl} />
+      </div>
+      <button className="test-btn" onClick={run} disabled={res.loading}>▶ Testar</button>
+      <ResultBox result={res} />
+    </div>
+  );
+}
+
 function DisconnectEndpoint() {
   const url  = `${window.location.origin}/api/whatsapp/disconnect`;
   const curl = `curl -X POST ${url}`;
@@ -389,6 +423,7 @@ function ApiDocs() {
       <h3 className="api-title">Referência da API</h3>
       <p className="api-subtitle">Base URL: <code className="base-url">{window.location.origin}</code></p>
       <div className="ep-list">
+        <PingEndpoint />
         <StatusEndpoint />
         <SendEndpoint />
         <SessionsEndpoint />
