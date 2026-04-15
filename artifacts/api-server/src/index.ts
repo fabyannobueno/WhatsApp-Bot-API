@@ -32,4 +32,11 @@ app.listen(port, (err) => {
 
   logger.info({ port }, "Server listening");
   initWhatsAppBot();
+
+  const PING_INTERVAL_MS = 5 * 60 * 1000;
+  setInterval(() => {
+    fetch(`http://localhost:${port}/api/whatsapp/status`)
+      .then(() => logger.info("Keep-alive ping OK"))
+      .catch((err) => logger.warn({ err }, "Keep-alive ping failed"));
+  }, PING_INTERVAL_MS);
 });
