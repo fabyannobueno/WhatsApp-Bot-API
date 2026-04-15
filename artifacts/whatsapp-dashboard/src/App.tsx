@@ -195,7 +195,7 @@ export default function App() {
       <div className="api-card">
         <h3 className="api-title">Enviar Mensagem via API</h3>
         <div className="code-block">
-          <pre>{`POST /api/whatsapp/send\nContent-Type: application/json\n\n{\n  "to": "5511999999999",\n  "message": "Sua mensagem aqui"\n}`}</pre>
+          <pre>{`POST /api/whatsapp/send\nContent-Type: application/json\nx-api-key: SUA_API_KEY\n\n{\n  "to": "551199999999",\n  "message": "Sua mensagem aqui"\n}`}</pre>
         </div>
         <div className="endpoints">
           <div className="endpoint"><span className="method get">GET</span><code>/api/whatsapp/status</code></div>

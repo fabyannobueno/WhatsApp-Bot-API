@@ -33,3 +33,8 @@ externalPort = 3000
 
 [nix]
 channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+WHATSAPP_API_KEY = "5962ee143ce66c39e775158c6a0b8657bb8badf3d35fa2a1"

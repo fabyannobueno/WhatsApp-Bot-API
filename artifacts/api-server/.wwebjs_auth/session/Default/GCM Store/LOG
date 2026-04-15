@@ -1,3 +1,2 @@
-2026/04/14-23:20:49.502 db5 Reusing MANIFEST /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/GCM Store/MANIFEST-000001
-2026/04/14-23:20:49.503 db5 Recovering log #3
-2026/04/14-23:20:49.503 db5 Reusing old log /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/GCM Store/000003.log 
+2026/04/15-01:38:44.924 4eb Creating DB /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/GCM Store since it was missing.
+2026/04/15-01:38:44.934 4eb Reusing MANIFEST /home/runner/workspace/artifacts/api-server/.wwebjs_auth/session/Default/GCM Store/MANIFEST-000001

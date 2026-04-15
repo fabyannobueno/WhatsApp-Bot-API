@@ -258,6 +258,14 @@ router.get('/whatsapp/dashboard', (req, res) => {
 });
 
 router.post('/whatsapp/send', async (req, res) => {
+  const apiKey = process.env['WHATSAPP_API_KEY'];
+  const providedKey = req.headers['x-api-key'];
+
+  if (!apiKey || providedKey !== apiKey) {
+    res.status(401).json({ success: false, error: 'Unauthorized: invalid or missing API key' });
+    return;
+  }
+
   const { to, message } = req.body as { to?: string; message?: string };
 
   if (!to || !message) {
@@ -272,7 +280,7 @@ router.post('/whatsapp/send', async (req, res) => {
   if (phoneClean.length < 10) {
     res.status(400).json({
       success: false,
-      error: 'Invalid phone number. Use format: 5511999999999 (country code + DDD + number)',
+      error: 'Invalid phone number. Use format: 551199999999 (country code + DDD + number)',
     });
     return;
   }

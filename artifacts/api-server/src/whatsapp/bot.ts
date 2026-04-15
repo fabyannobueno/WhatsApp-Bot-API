@@ -1,6 +1,7 @@
 import { createRequire } from 'node:module';
-import { rmSync, existsSync } from 'node:fs';
+import { rmSync, existsSync, readdirSync, readFileSync, readlinkSync } from 'node:fs';
 import { join } from 'node:path';
+import { execSync } from 'node:child_process';
 import { logger } from '../lib/logger.js';
 import {
   botMessages,
@@ -236,18 +237,73 @@ function scheduleRetry(): void {
   }, RETRY_DELAY_MS);
 }
 
-function clearChromiumLocks(): void {
-  const profileDir = join(process.cwd(), '.wwebjs_auth', 'session');
-  for (const lockFile of ['SingletonLock', 'SingletonSocket', 'SingletonCookie']) {
-    const filePath = join(profileDir, lockFile);
-    if (existsSync(filePath)) {
-      try {
-        rmSync(filePath, { force: true });
-        logger.info({ filePath }, 'Removed stale Chromium lock file');
-      } catch (err) {
-        logger.warn({ err, filePath }, 'Could not remove Chromium lock file');
+function killPidFromLock(profileDir: string): void {
+  const lockPath = join(profileDir, 'SingletonLock');
+  if (!existsSync(lockPath)) return;
+  try {
+    let raw = '';
+    try {
+      raw = readlinkSync(lockPath);
+    } catch {
+      try { raw = readFileSync(lockPath, 'utf8'); } catch { }
+    }
+    raw = raw.trim();
+    const parts = raw.split(/[-@]/);
+    for (const part of parts) {
+      const pid = parseInt(part, 10);
+      if (!isNaN(pid) && pid > 1) {
+        try {
+          execSync(`kill -9 ${pid} 2>/dev/null || true`, { stdio: 'ignore' });
+          logger.info({ pid }, 'Sent SIGKILL to stale Chromium PID from SingletonLock');
+        } catch {
+        }
       }
     }
+  } catch {
+  }
+}
+
+function nukeAuthDir(): void {
+  const authDir = join(process.cwd(), '.wwebjs_auth');
+  if (existsSync(authDir)) {
+    try {
+      rmSync(authDir, { recursive: true, force: true });
+      logger.info('Deleted entire .wwebjs_auth to allow clean Chromium start');
+    } catch (err) {
+      logger.warn({ err }, 'Could not delete .wwebjs_auth');
+    }
+  }
+}
+
+function clearChromiumLocks(): void {
+  const profileDir = join(process.cwd(), '.wwebjs_auth', 'session');
+
+  killPidFromLock(profileDir);
+
+  try {
+    execSync('pkill -9 -f chromium 2>/dev/null || true', { stdio: 'ignore' });
+    execSync('pkill -9 -f chrome 2>/dev/null || true', { stdio: 'ignore' });
+    execSync('sleep 1', { stdio: 'ignore' });
+  } catch {
+  }
+
+  if (!existsSync(profileDir)) return;
+
+  try {
+    const files = readdirSync(profileDir);
+    for (const file of files) {
+      if (file.startsWith('Singleton')) {
+        const filePath = join(profileDir, file);
+        try {
+          rmSync(filePath, { force: true });
+          logger.info({ filePath }, 'Removed stale Chromium lock file');
+        } catch (err) {
+          logger.warn({ err, filePath }, 'Could not remove Chromium lock file');
+        }
+      }
+    }
+  } catch (err) {
+    logger.warn({ err }, 'Error scanning Chromium profile dir for lock files');
   }
 }
 
@@ -274,20 +330,37 @@ export function initWhatsAppBot(): void {
         '--disable-accelerated-2d-canvas',
         '--no-first-run',
         '--no-zygote',
-        '--single-process',
         '--disable-gpu',
         '--disable-software-rasterizer',
+        '--disable-extensions',
+        '--disable-background-networking',
+        '--disable-sync',
+        '--metrics-recording-only',
+        '--mute-audio',
       ],
     },
   });
 
+  const INIT_TIMEOUT_MS = 90_000;
+  const initTimeout = setTimeout(() => {
+    if (!clientReady && !qrCodeData) {
+      logger.warn('WhatsApp initialization timed out — retrying');
+      initializationError = 'Initialization timed out. Retrying...';
+      newClient.destroy().catch(() => null);
+      client = null;
+      scheduleRetry();
+    }
+  }, INIT_TIMEOUT_MS);
+
   newClient.on('qr', (qr) => {
+    clearTimeout(initTimeout);
     qrCodeData = qr as string;
     logger.info('QR Code generated. Scan it with WhatsApp to authenticate.');
     qrcode.generate(qr as string, { small: true });
   });
 
   newClient.on('ready', () => {
+    clearTimeout(initTimeout);
     clientReady = true;
     qrCodeData = null;
     initializationError = null;
@@ -325,8 +398,14 @@ export function initWhatsAppBot(): void {
   client = newClient;
 
   newClient.initialize().catch((err: unknown) => {
-    initializationError = err instanceof Error ? err.message : String(err);
+    clearTimeout(initTimeout);
+    const msg = err instanceof Error ? err.message : String(err);
+    initializationError = msg;
     logger.error({ err }, 'Failed to initialize WhatsApp client — will retry');
+    if (msg.includes('profile appears to be in use') || msg.includes('Failed to launch')) {
+      logger.warn('Chromium profile lock detected — nuking auth dir for clean restart');
+      nukeAuthDir();
+    }
     scheduleRetry();
   });
 }
@@ -345,6 +424,16 @@ export async function sendMessage(to: string, message: string): Promise<{ succes
   } catch (err) {
     const errorMsg = err instanceof Error ? err.message : String(err);
     logger.error({ err, to }, 'Failed to send message');
+
+    const isInternalCrash = errorMsg.includes('getChat') || errorMsg.includes('Cannot read properties') || errorMsg.includes('Execution context');
+    if (isInternalCrash) {
+      logger.warn('WhatsApp client in broken state — scheduling re-initialization');
+      clientReady = false;
+      client = null;
+      scheduleRetry();
+      return { success: false, error: 'WhatsApp client lost connection — reconnecting automatically. Try again in ~30 seconds.' };
+    }
+
     return { success: false, error: errorMsg };
   }
 }
